@@ -29,7 +29,7 @@ wc <- df_prep %>%
 
 
 
-ui <- bslib::page_sidebar(
+ui <- page_sidebar(
   title = "ggFontPicker",
   theme = bs_theme(bootswatch = "minty"),
   sidebar = sidebar(
