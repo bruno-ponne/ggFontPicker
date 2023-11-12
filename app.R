@@ -2,7 +2,6 @@ library(shiny)
 library(bslib)
 library(dplyr)
 library(ggplot2)
-library(ggwordcloud)
 library(readr)
 library(showtext)
 
