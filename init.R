@@ -1,6 +1,6 @@
 # init.R
 
-my_packages = c("shiny", "bslib", "ggplot2", "dplyr", "readr", "showtext")
+my_packages = c("shiny", "bslib", "curl", "ggplot2", "dplyr", "readr", "showtext")
 install_if_missing = function(p) {
   if (p %in% rownames(installed.packages()) == FALSE) {
     install.packages(p)
