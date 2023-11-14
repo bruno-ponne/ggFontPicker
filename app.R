@@ -33,13 +33,13 @@ ui <- page_sidebar(
   title = "ggFontPicker",
   theme = bs_theme(bootswatch = "minty"),
   sidebar = sidebar(
-    selectInput("font_category", "Type", unique(font_list$items__category), selected = "sans-serif"),
+    selectInput("font_category", "Font Type", unique(font_list$items__category), selected = "sans-serif"),
     hr(), # Add a horizontal rule
-    selectInput("font_family", "Family", font_list$items__family, selected = "Montserrat"),
+    selectInput("font_family", "Font Family", font_list$items__family, selected = "Montserrat"),
     hr(),
     sliderInput("font_size",
-                "Size",
-                min = 10,  max = 24, value = 16),
+                " Font Size",
+                min = 8,  max = 24, value = 12),
     hr(), # Add a horizontal rule
     
     radioButtons("radio", "Plot",
@@ -51,11 +51,13 @@ ui <- page_sidebar(
   span(
   print("Notes:"),
   br(),
-  print("Google Fonts are accessible in R thanks to this package: https://cran.rstudio.com/web/packages/showtext/vignettes/introduction.html"), 
+  print("- These data come from a catalogue of inquests conducted in Westminster between 1760 and 1799. They document investigations into deaths under circumstances that were sudden, unexplained, or suspicious. Provided under a Creative Commons Attribution-ShareAlike 4.0 International License. Source: Sharon Howard, A Catalogue of Westminster Coroners' Inquests 1760-1799, version 2.0 (2018), based on data from www.londonlives.org."),
   br(),
-  print("Example data is provided under a Creative Commons Attribution-ShareAlike 4.0 International License. Source: Sharon Howard, A Catalogue of Westminster Coroners' Inquests 1760-1799, version 2.0 (2018), based on data from www.londonlives.org."),
+  br(),
+  print("- Google Fonts are accessible in R thanks to this package: https://cran.rstudio.com/web/packages/showtext/vignettes/introduction.html"), 
   style="font-size:12px;")
 )   
+
 
 server <- function(input, output, session) {
   
@@ -68,7 +70,7 @@ server <- function(input, output, session) {
   
   observe({
     
-    updateSelectInput(session, "font_family", label = "Family", choices = subsetted(),  selected = "Montserrat")
+    updateSelectInput(session, "font_family", label = "Font Family", choices = subsetted(),  selected = subsetted()[1])
     
   })
 
@@ -82,7 +84,8 @@ server <- function(input, output, session) {
     if (input$radio == 1) {
       
       p <-  ggplot(table_ver) +
-        geom_bar(aes(x = reorder(Var1,-Freq, sum), y = Freq), stat = "identity",color = "black", fill = "black") +
+        geom_bar(aes(x = reorder(Var1,-Freq, sum), y = Freq), 
+                 width = .7, stat = "identity",color = "black", fill = "black") +
         labs(title = "Jury's Veredicts", 
              y = "Frequency", 
              x = "Verdict",
@@ -92,7 +95,8 @@ server <- function(input, output, session) {
     if (input$radio == 2) {
       
       p <-  ggplot(wc) +
-        geom_bar(aes(y = reorder(cause_of_death,n, sum), x = n), stat = "identity",color = "black", fill = "black") +
+        geom_bar(aes(y = reorder(cause_of_death,n, sum), x = n), 
+                 width = .5, stat = "identity",color = "black", fill = "black") +
         labs(title = "Causes of death",
              y = "Cause of Death", 
              x = "Frequency",
@@ -106,6 +110,13 @@ server <- function(input, output, session) {
       theme(text=element_text(size=input$font_size, 
                               family = input$font_family))
   }, res = 100)
+  
+  # Solves problem that makes the page go idle every 55 seconds.
+  autoInvalidate <- reactiveTimer(10000)
+  observe({
+    autoInvalidate()
+    cat(".")
+  })
 }
 
 shinyApp(ui, server)
